@@ -179,6 +179,24 @@ __start:
 
 #endif /* !XCHAL_HAVE_BOOTLOADER */
 
+#ifdef CONFIG_BOARD_ESP32
+	/*
+	 * If using the Espressif bootloader, Cache_Flush(1) and
+	 * Cache_Read_Enable(1) must be called by the application.
+	 * (See set_cache_and_start_app() in bootloader_start.c
+	 * from esp-idf distribution.)
+	 */
+
+.type	Cache_Flush, @function
+.type	Cache_Read_Enable, @function
+
+	movi ARG1, 1
+	CALL Cache_Flush
+
+	movi ARG1, 1
+	CALL Cache_Read_Enable
+#endif /* CONFIG_BOARD_ESP32 */
+
 	/* Enter C domain, never returns from here */
 	CALL	_Cstart
 
